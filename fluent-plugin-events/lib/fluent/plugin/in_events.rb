@@ -32,10 +32,16 @@ module Fluent
       config_param :namespace, :string, default: nil
       config_param :label_selector, :string, default: nil
       config_param :field_selector, :string, default: nil
+      config_param :type_selector, :array, default: ["ADDED", "MODIFIED"], value_type: :string
       config_param :configmap_update_interval_seconds, :integer, default: 10
       
       def configure(conf)
         super
+
+        @valid_types = ["ADDED", "MODIFIED", "DELETED"]
+        raise Fluent::ConfigError, 'type_selector needs to be an array with maximum 3 elements: ADDED, MODIFIED and DELETED.' \
+          if @type_selector.length > 3 || !@type_selector.any? || !@type_selector.all? {|type| @valid_types.any? {|valid| valid.casecmp(type) == 0}}
+
         normalize_param
         connect_kubernetes
       end
@@ -93,7 +99,7 @@ module Fluent
 
               begin
                 entity = JSON.parse(entity)
-                router.emit tag, Fluent::Engine.now, entity
+                router.emit tag, Fluent::Engine.now, entity if @type_selector.any? {|type| type.casecmp(entity['type']) == 0}
                 @resource_version = entity['object']['metadata']['resourceVersion']
               rescue => e
                 log.error "Got exception #{e} parsing entity #{entity}. Skipping."
