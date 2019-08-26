@@ -80,6 +80,8 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
       echo "No changes in 'fluentd-sumologic.yaml.tmpl'."
   fi
 
+  CHANGES=`git diff --name-only $TRAVIS_COMMIT_RANGE`
+  echo "DEBUG: $CHANGES"
   # Generate override yaml file for chart dependencies if changes are made to values.yaml file
   if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "values.yaml"; then
     echo "Detected changes in 'values.yaml', generating overrides files..."
