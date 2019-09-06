@@ -27,6 +27,8 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_B
   # NOTE(ryan, 2019-08-30): Append "|| true" to command to ignore non-zero exit code
   changes=`git diff origin-repo/master..$TRAVIS_BRANCH --name-only | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml"` || true
   if [ -n "$changes" ]; then
+    files=`git --no-pager show -s --format="%an" .`
+    echo $files
     if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
       echo "Aborting due to manual changes detected in the following generated files: $changes"
       exit 1

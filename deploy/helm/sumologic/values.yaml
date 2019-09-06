@@ -7,7 +7,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 deployment:
-  replicaCount: 3
+  replicaCount: 4
   resources:
     limits:
       memory: 1Gi
