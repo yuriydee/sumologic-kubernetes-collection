@@ -14,7 +14,7 @@ deployment:
       cpu: 1
     requests:
       memory: 768Mi
-      cpu: 0.5
+      cpu: 1
 
 eventsDeployment:
   resources:
